@@ -187,6 +187,21 @@ function CmdLine:string(prefix, params, ignore)
    end
 end
 
+-- Print contents of `tbl`, with indentation.
+-- `indent` sets the initial level of indentation.
+function tprint(tbl, indent)
+  if not indent then indent = 0 end
+  for k, v in pairs(tbl) do
+    formatting = string.rep("  ", indent) .. k .. ": "
+    if type(v) == "table" then
+      print(formatting)
+      tprint(v, indent+1)
+    else
+      print(formatting .. tostring(v))
+    end
+  end
+end
+
 local oprint = nil
 function CmdLine:log(file, params)
    local f = (io.type(file) == 'file' and file) or io.open(file, 'w')
@@ -210,11 +225,7 @@ function CmdLine:log(file, params)
    end
    print('[program started on ' .. os.date() .. ']')
    print('[command line arguments]')
-   if params then
-      for k,v in pairs(params) do
-         print(k,v)
-      end
-   end
+   if params then tprint(params) end
    print('[----------------------]')
 end
 
